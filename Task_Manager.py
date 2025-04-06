@@ -12,11 +12,11 @@ def pridat_ukol():
     #Vytvoření dočasného listu pro uložení názvu i popisu úkolu jako jeden index v listu "ukoly".
     seznam = []
     nazev_ukolu = str(input("Zadejte název úkolu: "))
-    popis_ukolu = str(input("Zadejte popis úkolu: "))
+    popis_ukolu = str(input("Zadejte popis úkolu: \n"))
 
     #Kontrola platného vstupu
     if (nazev_ukolu or popis_ukolu) == "": 
-        print("Nezadali jste žádný vstup, prosím vyplňte název úkolu a popis úkolu.")
+        print("Nezadali jste žádný vstup, prosím vyplňte název úkolu a popis úkolu.\n")
         pridat_ukol()
     else:
         #Přidání názvu a popisu úkolu do listu "seznam" a následně přidání tohoto celku do listu "ukoly".
