@@ -12,7 +12,7 @@ def pridat_ukol():
     #Vytvoření dočasného listu pro uložení názvu i popisu úkolu jako jeden index v listu "ukoly".
     seznam = []
     nazev_ukolu = str(input("Zadejte název úkolu: "))
-    popis_ukolu = str(input("Zadejte popis úkolu: \n"))
+    popis_ukolu = str(input("Zadejte popis úkolu: "))
 
     #Kontrola platného vstupu
     if (nazev_ukolu or popis_ukolu) == "": 
@@ -23,7 +23,7 @@ def pridat_ukol():
         seznam.append(nazev_ukolu)
         seznam.append(popis_ukolu)
         ukoly.append(seznam)
-        print(f"Úkol '{nazev_ukolu}' byl přidán.\n")
+        print(f"\nÚkol '{nazev_ukolu}' byl přidán.\n")
 
 def zobrazit_ukoly():
     pocet = 1
@@ -44,13 +44,18 @@ def odstranit_ukol():
     cislo_ukolu = int(input("\nZadejte číslo úkolu, který chcete odstranit: ")) -1
 
     #Kontrola platného vstupu
-    if (cislo_ukolu + 1) not in range(1, len(ukoly)):
-        print("Tento úkol není v seznamu.")
-        odstranit_ukol()
-    else:
+    if len(ukoly) == 1:
+        if (cislo_ukolu + 1) == 1:
+            nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
+            ukoly.pop(cislo_ukolu)
+            print(f"Úkol {nazev_smazaneho_ukolu} byl odstraněn.\n")
+    elif (cislo_ukolu + 1) in range(0, len(ukoly)):
         nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
         ukoly.pop(cislo_ukolu)
         print(f"Úkol {nazev_smazaneho_ukolu} byl odstraněn.\n")
+    else:
+        print("Tento úkol není v seznamu.")
+        odstranit_ukol()
 
 while pokracovat:
     hlavni_menu()
