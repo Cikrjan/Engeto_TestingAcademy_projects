@@ -49,6 +49,9 @@ def odstranit_ukol():
             nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
             ukoly.pop(cislo_ukolu)
             print(f"Úkol {nazev_smazaneho_ukolu} byl odstraněn.\n")
+        else:
+            print("Tento úkol není v seznamu.")
+            odstranit_ukol()
     elif (cislo_ukolu + 1) in range(0, (len(ukoly) + 1)):
         nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
         ukoly.pop(cislo_ukolu)
