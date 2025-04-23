@@ -10,20 +10,23 @@ def hlavni_menu():
 
 def pridat_ukol():
     #Vytvoření dočasného listu pro uložení názvu i popisu úkolu jako jeden index v listu "ukoly".
-    seznam = []
-    nazev_ukolu = str(input("Zadejte název úkolu: "))
-    popis_ukolu = str(input("Zadejte popis úkolu: "))
+    while True:
+        seznam = []
+        nazev_ukolu = str(input("Zadejte název úkolu: "))
+        popis_ukolu = str(input("Zadejte popis úkolu: "))
 
-    #Kontrola platného vstupu
-    if (nazev_ukolu or popis_ukolu) == "": 
-        print("Nezadali jste žádný vstup, prosím vyplňte název úkolu a popis úkolu.\n")
-        pridat_ukol()
-    else:
-        #Přidání názvu a popisu úkolu do listu "seznam" a následně přidání tohoto celku do listu "ukoly".
-        seznam.append(nazev_ukolu)
-        seznam.append(popis_ukolu)
-        ukoly.append(seznam)
-        print(f"\nÚkol '{nazev_ukolu}' byl přidán.\n")
+        #Kontrola platného vstupu
+        if nazev_ukolu  == "": 
+            print("Nezadali jste název úkolu, prosím zadejte vstup znovu.\n")
+        elif popis_ukolu == "":
+            print("Nezadali jste popis úkolu, prosím zadejte vstup znovu.\n")
+        else:
+            #Přidání názvu a popisu úkolu do listu "seznam" a následně přidání tohoto celku do listu "ukoly".
+            seznam.append(nazev_ukolu)
+            seznam.append(popis_ukolu)
+            ukoly.append(seznam)
+            print(f"\nÚkol '{nazev_ukolu}' byl přidán.\n")
+            break
 
 def zobrazit_ukoly():
     pocet = 1
