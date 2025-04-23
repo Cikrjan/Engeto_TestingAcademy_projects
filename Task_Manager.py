@@ -1,5 +1,4 @@
 ukoly = []
-pokracovat = True
 
 def hlavni_menu():
     print("Správce úkolů - Hlavní menu\n"
@@ -9,8 +8,8 @@ def hlavni_menu():
         "4. Konec programu")
 
 def pridat_ukol():
-    #Vytvoření dočasného listu pro uložení názvu i popisu úkolu jako jeden index v listu "ukoly".
     while True:
+        #Vytvoření dočasného listu pro uložení názvu i popisu úkolu jako jeden index v listu "ukoly".
         seznam = []
         nazev_ukolu = str(input("Zadejte název úkolu: "))
         popis_ukolu = str(input("Zadejte popis úkolu: "))
@@ -37,33 +36,30 @@ def zobrazit_ukoly():
     print("")
 
 def odstranit_ukol():
-    #Zobrazení seznamu úkolů
-    pocet = 1
-    print("\nSeznam úkolů:")
-    for poradi in range(0, len(ukoly)):
-        print(f"{pocet}. {ukoly[poradi][0]} - {ukoly[poradi][1]}")
-        pocet += 1
+    while True:
+        #Zobrazení seznamu úkolů
+        zobrazit_ukoly()
 
-    cislo_ukolu = int(input("\nZadejte číslo úkolu, který chcete odstranit: ")) -1
+        cislo_ukolu = int(input("\nZadejte číslo úkolu, který chcete odstranit: ")) -1
 
-    #Kontrola platného vstupu
-    if len(ukoly) == 1:
-        if (cislo_ukolu + 1) == 1:
+        #Kontrola platného vstupu
+        if len(ukoly) == 1:
+            if (cislo_ukolu + 1) == 1:
+                nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
+                ukoly.pop(cislo_ukolu)
+                print(f"Úkol {nazev_smazaneho_ukolu} byl odstraněn.\n")
+                break
+            else:
+                print("Tento úkol není v seznamu.")
+        elif (cislo_ukolu + 1) in range(0, (len(ukoly) + 1)):
             nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
             ukoly.pop(cislo_ukolu)
-            print(f"Úkol {nazev_smazaneho_ukolu} byl odstraněn.\n")
+            print(f"Úkol '{nazev_smazaneho_ukolu}' byl odstraněn.\n")
+            break
         else:
             print("Tento úkol není v seznamu.")
-            odstranit_ukol()
-    elif (cislo_ukolu + 1) in range(0, (len(ukoly) + 1)):
-        nazev_smazaneho_ukolu = ukoly[cislo_ukolu][0]
-        ukoly.pop(cislo_ukolu)
-        print(f"Úkol '{nazev_smazaneho_ukolu}' byl odstraněn.\n")
-    else:
-        print("Tento úkol není v seznamu.")
-        odstranit_ukol()
 
-while pokracovat:
+while True:
     hlavni_menu()
 
     vyber = input("Vyberte možnost (1-4): ")
@@ -75,8 +71,8 @@ while pokracovat:
     elif vyber == "3":
         odstranit_ukol()
     elif vyber == "4":
-        pokracovat = False
         print("\nKonec programu.")
+        break
     else:
         print("\nZadali jste neplatnou volbu.\n")
     
