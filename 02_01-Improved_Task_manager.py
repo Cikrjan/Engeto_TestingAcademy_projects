@@ -61,6 +61,14 @@ def aktualizovat_ukol():
     kurzor.close()
     conn.close()
 
+def odstranit_ukol():
+    zobrazit_ukoly()
+    ukolID = int(input("Zadej ID úkolu, který chcete smazat: "))
+    conn = pripojeni_db()
+    kurzor = conn.cursor()
+    kurzor.execute("DELETE UkolID from Ukoly WHERE UkolID = %s", (ukolID))
+    kurzor.close()
+    conn.close()
 
 def hlavni_menu():
     while True:
