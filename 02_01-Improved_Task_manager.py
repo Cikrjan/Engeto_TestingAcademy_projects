@@ -5,7 +5,7 @@ def pripojeni_db():
         host = "localhost", 
         user = "root", 
         password = "1111", 
-        database = "TaskManager"
+        database = "taskmanager"
     )
 
 def vytvoreni_tabulky():
@@ -19,7 +19,8 @@ def vytvoreni_tabulky():
 	    UkolID INT PRIMARY KEY AUTO_INCREMENT,
         Nazev_ukolu VARCHAR(50) NOT NULL,
         Popis_ukolu VARCHAR(50) NOT NULL,
-        Stav VARCHAR(10) DEFAULT "Nezahájeno"
+        Stav VARCHAR(10) DEFAULT "Nezahájeno",
+        Datum_vytvoreni DATE
     )
     """)
 
@@ -28,23 +29,33 @@ def vytvoreni_tabulky():
     conn.close()
     print("Tabulka vytvořena")
 
+
 def pridat_ukol():
-    Nazev_ukolu = input("Název úkolu: ")
-    Popis_ukolu = input("Popis úkolu: ")
-    conn = pripojeni_db()
-    kurzor = conn.cursor()
-    kurzor.execute("INSERT INTO Ukoly (Nazev_ukolu, Popis_ukolu) Values (%s, %s)", (Nazev_ukolu, Popis_ukolu))
-    conn.commit()
-    kurzor.close()
-    conn.close()
-    print("Úkol přidán")
+    while True:
+        Nazev_ukolu = input("Název úkolu: ")
+        Popis_ukolu = input("Popis úkolu: ")
+        if Nazev_ukolu  == "": 
+                print("Nezadali jste název úkolu, prosím zadejte vstup znovu.\n")
+        elif Popis_ukolu == "":
+            print("Nezadali jste popis úkolu, prosím zadejte vstup znovu.\n")
+        else:
+            conn = pripojeni_db()
+            kurzor = conn.cursor()
+            kurzor.execute("INSERT INTO Ukoly (Nazev_ukolu, Popis_ukolu, Datum_vytvoreni) Values (%s, %s, NOW())", (Nazev_ukolu, Popis_ukolu))
+            conn.commit()
+            kurzor.close()
+            conn.close()
+            print("Úkol přidán")
+            break
 
 def zobrazit_ukoly():
     conn = pripojeni_db()
     kurzor = conn.cursor()
-    kurzor.execute("SELECT UkolID, Nazev_ukolu, Popis_ukolu, Stav " \
-                    "FROM Ukoly" \
-                    "WHERE Stav = 'Nezahájeno' OR 'Probíhá'")
+    kurzor.execute("""
+    SELECT UkolID, Nazev_ukolu, Popis_ukolu, Stav 
+    FROM Ukoly
+    WHERE Stav = 'Nezahájeno' OR 'Probíhá'
+    """)
     print("\n Seznam úkolů: ")
     for row in kurzor.fetchall():
         stav = "Nezahájeno" if row[3] else "Probíhá"
@@ -66,7 +77,7 @@ def odstranit_ukol():
     ukolID = int(input("Zadej ID úkolu, který chcete smazat: "))
     conn = pripojeni_db()
     kurzor = conn.cursor()
-    kurzor.execute("DELETE UkolID from Ukoly WHERE UkolID = %s", (ukolID))
+    kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID))
     kurzor.close()
     conn.close()
 
