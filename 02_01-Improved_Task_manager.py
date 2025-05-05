@@ -13,22 +13,33 @@ def vytvoreni_tabulky():
     conn = pripojeni_db()
     kurzor = conn.cursor() 
 
-    #Vytvoření tabulky pokud ještě neexistuje
+    #Ověření existence tabulky
+    nazev_tabulky = "ukoly"
     kurzor.execute("""
-    CREATE TABLE IF NOT EXISTS Ukoly (
-	    UkolID INT PRIMARY KEY AUTO_INCREMENT,
-        Nazev_ukolu VARCHAR(50) NOT NULL,
-        Popis_ukolu VARCHAR(50) NOT NULL,
-        Stav VARCHAR(10) DEFAULT "Nezahájeno",
-        Datum_vytvoreni DATE
-    )
-    """)
+        SELECT COUNT(*) FROM information_schema.tables 
+        WHERE table_schema = %s AND table_name = %s """, ("taskmanager", nazev_tabulky))
 
-    conn.commit()
-    kurzor.close()
-    conn.close()
-    print("Tabulka vytvořena")
+    exists = kurzor.fetchone()[0]
 
+    if exists:
+        print(f"Tabulka '{nazev_tabulky}' už existuje.")       
+    else:
+        print(exists)
+        #Vytvoření tabulky pokud ještě neexistuje
+        kurzor.execute("""
+        CREATE TABLE IF NOT EXISTS Ukoly (
+            UkolID INT PRIMARY KEY AUTO_INCREMENT,
+            Nazev_ukolu VARCHAR(50) NOT NULL,
+            Popis_ukolu VARCHAR(50) NOT NULL,
+            Stav VARCHAR(10) DEFAULT "Nezahájeno",
+            Datum_vytvoreni DATE
+        )
+        """)
+
+        conn.commit()
+        kurzor.close()
+        conn.close()
+        print("Tabulka vytvořena")
 
 def pridat_ukol():
     while True:
@@ -56,10 +67,14 @@ def zobrazit_ukoly():
     FROM Ukoly
     WHERE Stav = 'Nezahájeno' OR 'Probíhá'
     """)
-    print("\n Seznam úkolů: ")
-    for row in kurzor.fetchall():
-        stav = "Nezahájeno" if row[3] else "Probíhá"
-        print(f"{row[0]} : {row[1]} - {row[2]} ({stav})")
+    seznam = kurzor.fetchall()
+    if not seznam:
+        print("Seznam je prázdný")
+    else:
+        print("\n Seznam úkolů: ")    
+        for row in seznam:
+            stav = "Nezahájeno" if row[3] else "Probíhá"
+            print(f"{row[0]} : {row[1]} - {row[2]} ({stav})")
     kurzor.close()
     conn.close()
 
