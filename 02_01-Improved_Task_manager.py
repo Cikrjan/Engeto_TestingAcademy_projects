@@ -45,6 +45,7 @@ def pridat_ukol():
     while True:
         Nazev_ukolu = input("Název úkolu: ")
         Popis_ukolu = input("Popis úkolu: ")
+        #Ověření zadání obou vstupů
         if Nazev_ukolu  == "": 
                 print("Nezadali jste název úkolu, prosím zadejte vstup znovu.\n")
         elif Popis_ukolu == "":
@@ -65,16 +66,19 @@ def zobrazit_ukoly():
     kurzor.execute("""
     SELECT UkolID, Nazev_ukolu, Popis_ukolu, Stav 
     FROM Ukoly
-    WHERE Stav = 'Nezahájeno' OR 'Probíhá'
+    WHERE Stav IN ('Nezahájeno', 'Probíhá')
     """)
+    #Ověření, že seznam není prázdný
     seznam = kurzor.fetchall()
     if not seznam:
         print("Seznam je prázdný")
     else:
         print("\n Seznam úkolů: ")    
-        for row in seznam:
-            stav = "Nezahájeno" if row[3] else "Probíhá"
-            print(f"{row[0]} : {row[1]} - {row[2]} ({stav})")
+        for row in seznam:   
+            if row[3] == "Hotovo":
+                pass
+            else:
+                print(f"{row[0]} : {row[1]} - {row[2]} ({row[3]})")
     kurzor.close()
     conn.close()
 
@@ -84,6 +88,7 @@ def aktualizovat_ukol():
     conn = pripojeni_db()
     kurzor = conn.cursor()
     kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
+    conn.commit()
     kurzor.close()
     conn.close()
 
