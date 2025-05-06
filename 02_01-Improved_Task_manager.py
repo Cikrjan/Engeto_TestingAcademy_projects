@@ -146,19 +146,24 @@ def odstranit_ukol():
         seznam = kurzor.fetchall()
         if len(seznam) == 1:
             if (ukolID) == 1:
-                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID))
+                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID,))
                 conn.commit()
+                kurzor.close()
+                conn.close()
+                print("Úkol odstraněn.")
                 break
             else:
                 print("ID neexistuje, zadejte ho prosím znovu.") 
         elif ukolID in range(1, (len(seznam) + 1)):
-                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID))
+                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID,))
                 conn.commit()
+                kurzor.close()
+                conn.close()
+                print("Úkol odstraněn.")
                 break
         else:
             print("ID neexistuje, zadejte ho prosím znovu.")
-        kurzor.close()
-        conn.close()
+
 
 def hlavni_menu():
     while True:
