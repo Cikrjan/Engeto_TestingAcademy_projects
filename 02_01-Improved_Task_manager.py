@@ -73,7 +73,7 @@ def zobrazit_ukoly():
     if not seznam:
         print("Seznam je prázdný")
     else:
-        print("\n Seznam úkolů: ")    
+        print("\nSeznam úkolů: ")    
         for row in seznam:   
             if row[3] == "Hotovo":
                 pass
@@ -82,15 +82,55 @@ def zobrazit_ukoly():
     kurzor.close()
     conn.close()
 
-def aktualizovat_ukol():
-    ukolID = int(input("ID úkolu: "))
-    stav = input("Nový stav úkolu (Probíhá, Hotovo): ")
+def zobrazit_vsechny_ukoly():
     conn = pripojeni_db()
     kurzor = conn.cursor()
-    kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
-    conn.commit()
+    kurzor.execute("""
+    SELECT UkolID, Nazev_ukolu, Stav 
+    FROM Ukoly
+    """)
+    #Ověření, že seznam není prázdný
+    seznam = kurzor.fetchall()
+    if not seznam:
+        print("Seznam je prázdný")
+    else:
+        print("\nSeznam úkolů: ")    
+        for row in seznam:   
+            print(f"{row[0]} : {row[1]} ({row[2]})")
     kurzor.close()
     conn.close()
+
+def aktualizovat_ukol():
+    while True:
+        conn = pripojeni_db()
+        kurzor = conn.cursor()
+        zobrazit_vsechny_ukoly()
+        ukolID = int(input("ID úkolu: "))
+        stav = input("Nový stav úkolu (Probíhá, Hotovo): ")
+        #SQL dotaz pro účely ověření zadání platného ID
+        kurzor.execute("""
+            SELECT * 
+            FROM Ukoly
+        """)
+        seznam = kurzor.fetchall()
+        if len(seznam) == 1:
+            if (ukolID) == 1:
+                kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
+                conn.commit()
+                kurzor.close()
+                conn.close()
+                break
+            else:
+                print("ID neexistuje") 
+        elif ukolID in range(1, (len(seznam) + 1)):
+                kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
+                conn.commit()
+                kurzor.close()
+                conn.close()
+                break
+        else:
+            print("ID neexistuje")
+
 
 def odstranit_ukol():
     zobrazit_ukoly()
