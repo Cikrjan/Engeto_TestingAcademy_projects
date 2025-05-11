@@ -92,7 +92,7 @@ def zobrazit_vsechny_ukoly(): #pomocná funkce pro zobrazení všech úkolů ve 
     #Ověření, že seznam není prázdný
     seznam = kurzor.fetchall()
     if not seznam:
-        print("Seznam je prázdný")
+        return "Seznam je prázdný"
     else:
         print("\nSeznam úkolů: ")    
         for row in seznam:   
@@ -104,66 +104,47 @@ def aktualizovat_ukol():
     while True:
         conn = pripojeni_db()
         kurzor = conn.cursor()
-        zobrazit_vsechny_ukoly()
-        ukolID = int(input("ID úkolu: "))
-        stav = input("Nový stav úkolu (Probíhá, Hotovo): ")
-        #SQL dotaz pro účely ověření zadání platného ID
-        kurzor.execute("""
-            SELECT * 
-            FROM Ukoly
-        """)
-        seznam = kurzor.fetchall()
-        if len(seznam) == 1:
-            if (ukolID) == 1:
-                kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
-                conn.commit()
-                kurzor.close()
-                conn.close()
-                break
-            else:
-                print("ID neexistuje, zadejte ho prosím znovu.") 
-        elif ukolID in range(1, (len(seznam) + 1)):
-                kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
-                conn.commit()
-                kurzor.close()
-                conn.close()
-                break
+        if zobrazit_vsechny_ukoly() == "Seznam je prázdný":
+            print("Seznam je prázdný.")
+            break
         else:
-            print("ID neexistuje, zadejte ho prosím znovu.")
+            zobrazit_vsechny_ukoly()
+            ukolID = int(input("ID úkolu: "))
+            stav = input("Nový stav úkolu (Probíhá, Hotovo): ")
+            #SQL dotaz pro účely ověření zadání platného ID
+            kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
+            platneID = kurzor.fetchone()
+            if platneID:
+                    kurzor.execute("UPDATE Ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
+                    conn.commit()
+                    kurzor.close()
+                    conn.close()
+                    break
+            else:
+                print("ID neexistuje, zadejte ho prosím znovu.")
 
 
 def odstranit_ukol():
     while True:
         conn = pripojeni_db()
         kurzor = conn.cursor()
-        zobrazit_vsechny_ukoly()
-        ukolID = int(input("Zadej ID úkolu, který chcete smazat: "))
-        #SQL dotaz pro účely ověření zadání platného ID
-        kurzor.execute("""
-            SELECT * 
-            FROM Ukoly
-        """)
-        seznam = kurzor.fetchall()
-        if len(seznam) == 1:
-            if (ukolID) == 1:
-                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID,))
-                conn.commit()
-                kurzor.close()
-                conn.close()
-                print("Úkol odstraněn.")
-                break
-            else:
-                print("ID neexistuje, zadejte ho prosím znovu.") 
-        elif ukolID in range(1, (len(seznam) + 1)):
-                kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID,))
-                conn.commit()
-                kurzor.close()
-                conn.close()
-                print("Úkol odstraněn.")
-                break
+        if zobrazit_vsechny_ukoly() == "Seznam je prázdný":
+            print("Seznam je prázdný.")
+            break
         else:
-            print("ID neexistuje, zadejte ho prosím znovu.")
-
+            zobrazit_vsechny_ukoly()
+            ukolID = int(input("Zadej ID úkolu, který chcete smazat: "))
+            #SQL dotaz pro účely ověření zadání platného ID
+            kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
+            platneID = kurzor.fetchone()
+            if platneID:
+                    kurzor.execute("DELETE FROM Ukoly WHERE UkolID = %s", (ukolID,))
+                    conn.commit()
+                    kurzor.close()
+                    conn.close()
+                    break
+            else:
+                print("ID neexistuje, zadejte ho prosím znovu.")
 
 def hlavni_menu():
     while True:
