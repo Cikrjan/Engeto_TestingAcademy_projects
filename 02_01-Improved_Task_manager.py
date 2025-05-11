@@ -1,44 +1,52 @@
 import mysql.connector
+from mysql.connector import Error
 
 def pripojeni_db():
-    return mysql.connector.connect(
-        host = "localhost", 
-        user = "root", 
-        password = "1111", 
-        database = "taskmanager"
-    )
+    try:
+        return mysql.connector.connect(
+            host = "localhost", 
+            user = "root", 
+            password = "1111", 
+            database = "taskmanager"
+        )
+    except Error as e:
+        return None
 
 def vytvoreni_tabulky():
     #Připojení databáze
     conn = pripojeni_db()
-    kurzor = conn.cursor() 
-
-    #Ověření existence tabulky
-    nazev_tabulky = "ukoly"
-    kurzor.execute("""
-        SELECT COUNT(*) FROM information_schema.tables 
-        WHERE table_schema = %s AND table_name = %s """, ("taskmanager", nazev_tabulky))
-
-    exists = kurzor.fetchone()[0]
-
-    if exists:
-        print(f"Tabulka '{nazev_tabulky}' už existuje.")       
+    if conn == None:
+        print("Databáze není připojená.")
+        exit()
     else:
-        #Vytvoření tabulky pokud ještě neexistuje
-        kurzor.execute("""
-        CREATE TABLE IF NOT EXISTS Ukoly (
-            UkolID INT PRIMARY KEY AUTO_INCREMENT,
-            Nazev_ukolu VARCHAR(50) NOT NULL,
-            Popis_ukolu VARCHAR(50) NOT NULL,
-            Stav VARCHAR(10) DEFAULT "Nezahájeno",
-            Datum_vytvoreni DATE
-        )
-        """)
+        kurzor = conn.cursor() 
 
-        conn.commit()
-        kurzor.close()
-        conn.close()
-        print("Tabulka vytvořena")
+        #Ověření existence tabulky
+        nazev_tabulky = "ukoly"
+        kurzor.execute("""
+            SELECT COUNT(*) FROM information_schema.tables 
+            WHERE table_schema = %s AND table_name = %s """, ("taskmanager", nazev_tabulky))
+
+        exists = kurzor.fetchone()[0]
+
+        if exists:
+            print(f"Tabulka '{nazev_tabulky}' už existuje.")       
+        else:
+            #Vytvoření tabulky pokud ještě neexistuje
+            kurzor.execute("""
+            CREATE TABLE IF NOT EXISTS Ukoly (
+                UkolID INT PRIMARY KEY AUTO_INCREMENT,
+                Nazev_ukolu VARCHAR(50) NOT NULL,
+                Popis_ukolu VARCHAR(50) NOT NULL,
+                Stav VARCHAR(10) DEFAULT "Nezahájeno",
+                Datum_vytvoreni DATE
+            )
+            """)
+
+            conn.commit()
+            kurzor.close()
+            conn.close()
+            print("Tabulka vytvořena")
 
 def pridat_ukol():
     while True:
@@ -46,7 +54,7 @@ def pridat_ukol():
         Popis_ukolu = input("Popis úkolu: ")
         #Ověření zadání obou vstupů
         if Nazev_ukolu  == "": 
-                print("Nezadali jste název úkolu, prosím zadejte vstup znovu.\n")
+            print("Nezadali jste název úkolu, prosím zadejte vstup znovu.\n")
         elif Popis_ukolu == "":
             print("Nezadali jste popis úkolu, prosím zadejte vstup znovu.\n")
         else:
