@@ -24,7 +24,6 @@ def vytvoreni_tabulky():
     if exists:
         print(f"Tabulka '{nazev_tabulky}' už existuje.")       
     else:
-        print(exists)
         #Vytvoření tabulky pokud ještě neexistuje
         kurzor.execute("""
         CREATE TABLE IF NOT EXISTS Ukoly (
@@ -57,7 +56,7 @@ def pridat_ukol():
             conn.commit()
             kurzor.close()
             conn.close()
-            print("Úkol přidán")
+            print("Úkol přidán.\n")
             break
 
 def zobrazit_ukoly():
@@ -79,6 +78,7 @@ def zobrazit_ukoly():
                 pass
             else:
                 print(f"{row[0]} : {row[1]} - {row[2]} ({row[3]})")
+    print("")
     kurzor.close()
     conn.close()
 
@@ -104,11 +104,10 @@ def aktualizovat_ukol():
     while True:
         conn = pripojeni_db()
         kurzor = conn.cursor()
-        if zobrazit_vsechny_ukoly() == "Seznam je prázdný":
-            print("Seznam je prázdný.")
+        if zobrazit_vsechny_ukoly() == "Seznam je prázdný": #Ošetření v případě prázdného seznamu
+            print("Seznam je prázdný.\n")
             break
         else:
-            zobrazit_vsechny_ukoly()
             ukolID = int(input("ID úkolu: "))
             stav = input("Nový stav úkolu (Probíhá, Hotovo): ")
             #SQL dotaz pro účely ověření zadání platného ID
@@ -119,20 +118,20 @@ def aktualizovat_ukol():
                     conn.commit()
                     kurzor.close()
                     conn.close()
+                    print("Úkol aktualizován.\n")
                     break
             else:
-                print("ID neexistuje, zadejte ho prosím znovu.")
+                print("ID neexistuje, zadejte ho prosím znovu.\n")
 
 
 def odstranit_ukol():
     while True:
         conn = pripojeni_db()
         kurzor = conn.cursor()
-        if zobrazit_vsechny_ukoly() == "Seznam je prázdný":
-            print("Seznam je prázdný.")
+        if zobrazit_vsechny_ukoly() == "Seznam je prázdný": #Ošetření v případě prázdného seznamu
+            print("Seznam je prázdný.\n")
             break
         else:
-            zobrazit_vsechny_ukoly()
             ukolID = int(input("Zadej ID úkolu, který chcete smazat: "))
             #SQL dotaz pro účely ověření zadání platného ID
             kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
@@ -142,9 +141,10 @@ def odstranit_ukol():
                     conn.commit()
                     kurzor.close()
                     conn.close()
+                    print("Úkol odstraněn.\n")
                     break
             else:
-                print("ID neexistuje, zadejte ho prosím znovu.")
+                print("ID neexistuje, zadejte ho prosím znovu.\n")
 
 def hlavni_menu():
     while True:
