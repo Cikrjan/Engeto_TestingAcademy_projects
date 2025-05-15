@@ -2,10 +2,10 @@ import mysql.connector
 
 def create_test_tables():
     conn = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="1111",
-        database="taskmanager_test"
+        host = "localhost",
+        user = "root",
+        password = "1111",
+        database = "taskmanager_test"
     )
     kurzor = conn.cursor()
 
