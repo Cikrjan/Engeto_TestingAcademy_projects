@@ -29,3 +29,15 @@ def test_pridat_ukol_pozitivni(db_connection):
     
     assert vysledek is not None
 
+def test_pridat_ukol_negativni(db_connection):
+    kurzor = db_connection.cursor()
+    kurzor.execute("INSERT INTO ukoly (Nazev_ukolu, Popis_ukolu, Datum_vytvoreni) VALUES ('', 'Test_popis', NOW())")
+    db_connection.commit()
+    kurzor.execute("SELECT * FROM ukoly WHERE Nazev_ukolu = 'Test_nazev'")
+    vysledek = kurzor.fetchone()
+    kurzor.execute("DELETE FROM ukoly WHERE Nazev_ukolu = 'Test_nazev'")
+    db_connection.commit()
+    kurzor.close()
+    
+    assert vysledek is None
+
