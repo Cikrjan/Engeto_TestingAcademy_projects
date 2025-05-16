@@ -1,6 +1,6 @@
 import mysql.connector
 
-def create_test_tables():
+def vytvoreni_test_tabulky():
     conn = mysql.connector.connect(
         host = "localhost",
         user = "root",
@@ -28,4 +28,4 @@ def create_test_tables():
 
 
 if __name__ == "__main__":
-    create_test_tables()
+    vytvoreni_test_tabulky()
