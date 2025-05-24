@@ -1,6 +1,7 @@
 import pytest
 import mysql.connector
 from test_init import vytvoreni_test_tabulky
+from 02_01-Improved_Task_manager import
 
 @pytest.fixture(scope="session", autouse=True)
 def vytvoreni_test_db():
