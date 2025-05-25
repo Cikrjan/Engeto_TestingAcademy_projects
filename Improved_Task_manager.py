@@ -126,6 +126,11 @@ def aktualizovat_ukol_vstupy(pripojeni):
 
 def aktualizovat_ukol(pripojeni, ukolID, stav):
     kurzor = pripojeni.cursor()
+    kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
+    if not kurzor.fetchone():
+        kurzor.close()
+        raise ValueError("ID neexistuje.")
+    
     kurzor.execute("UPDATE ukoly SET Stav = %s WHERE UkolID = %s", (stav, ukolID))
     pripojeni.commit()
     kurzor.close()

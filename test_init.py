@@ -9,10 +9,10 @@ def vytvoreni_test_tabulky():
     )
     kurzor = conn.cursor()
 
-    kurzor.execute("DROP TABLE IF EXISTS ukoly_test")
+    kurzor.execute("DROP TABLE IF EXISTS ukoly")
 
     kurzor.execute("""
-            CREATE TABLE IF NOT EXISTS ukoly_test (
+            CREATE TABLE IF NOT EXISTS ukoly (
                 UkolID INT PRIMARY KEY AUTO_INCREMENT,
                 Nazev_ukolu VARCHAR(50) NOT NULL,
                 Popis_ukolu VARCHAR(50) NOT NULL,
