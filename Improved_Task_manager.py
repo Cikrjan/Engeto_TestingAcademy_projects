@@ -157,6 +157,11 @@ def odstranit_ukol_vstupy(pripojeni):
 
 def odstranit_ukol(pripojeni, ukolID):
     kurzor = pripojeni.cursor()
+    kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
+    if not kurzor.fetchone():
+        kurzor.close()
+        raise ValueError("ID neexistuje.")
+    
     kurzor.execute("DELETE FROM ukoly WHERE UkolID = %s", (ukolID,))
     pripojeni.commit()
     kurzor.close()
