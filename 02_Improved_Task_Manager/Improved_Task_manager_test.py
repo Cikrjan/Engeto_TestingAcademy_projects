@@ -36,7 +36,7 @@ def test_pridat_ukol_pozitivni(pripojeni):
     
     assert vysledek is not None
 
-def test_pridat_ukol_negativni(pripojeni):
+def test_pridat_ukol_negativni(pripojeni): #tato funkce testuje, zda je ošetřen vstup při zadání prázdného stringu.
     #přidám úkol do databáze skrze funkci z hlavního skriptu
     pridat_ukol(pripojeni, "", "Test_popis")
 
