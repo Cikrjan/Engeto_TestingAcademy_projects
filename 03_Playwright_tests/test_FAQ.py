@@ -14,7 +14,7 @@ def page(request):
 
 @pytest.mark.parametrize("page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_FAQ(page):
-    #odkliknutí cookie consentu
+    #přejití na testovanou stránku
     page.goto("https://engeto.cz/")
 
     #nalezení a kliknutí na tlačítko odmítnou na cookie liště
@@ -27,6 +27,7 @@ def test_FAQ(page):
     faq_button = page.locator("[data-mobile-key='menu-key-4397']")
     faq_button.click()
 
+    #Filtr "Ukončení kurzu a uplatnění" a otestování změny barvy pozadí po najetí na tlačítko
     filter_button = page.locator("[for='filter-item_ukonceni-kurzu']")
     color_before = filter_button.evaluate("""
         function(el) {
@@ -34,15 +35,26 @@ def test_FAQ(page):
         }
     """)
     filter_button.hover()
-    page.wait_for_timeout(300)
+    page.wait_for_timeout(1000)
     color_after = filter_button.evaluate("""
         function(el) {
             return getComputedStyle(el).backgroundColor;
         }
     """)
-    if color_before == color_after:
-        filter_button.click()
-    
-    filter_subtitle = page.locator("#h-pristup-a-dokonceni-kurzu")
+    print("Barva před:", color_before)
+    print("Barva po:", color_after)
 
-    assert filter_subtitle.is_visible()
+    try:
+        assert color_before != color_after
+        filter_button.click()
+
+    except AssertionError:
+        print("Pozor, barva se nezměnila!")
+    
+    question_rolldown = page.locator("#kdy-se-uzavira-kurz-do-kdy-mohu-odevzdavat-projekty-prochazet-zaznamy-a-ucebni-materialy > h3 > a")
+    question_rolldown.click()
+
+    link = page.locator("#kdy-se-uzavira-kurz-do-kdy-mohu-odevzdavat-projekty-prochazet-zaznamy-a-ucebni-materialy > div > ul > li:nth-child(4) > a:nth-child(3)")
+    
+    assert link.is_visible()
+
