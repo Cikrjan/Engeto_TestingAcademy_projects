@@ -11,7 +11,6 @@ def new_page(request):
         yield page
         page.close()
 
-
 @pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_SignIn_Positive(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
