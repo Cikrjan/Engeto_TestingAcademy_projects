@@ -1,18 +1,7 @@
 import pytest
-from playwright.sync_api import sync_playwright, Page
-
-@pytest.fixture(scope='function', autouse=True)
-def new_page(request):
-    browser_name = request.param
-    with sync_playwright() as p:
-        browser_type = getattr(p, browser_name)
-        browser = browser_type.launch(headless=False, slow_mo=500)
-        page = browser.new_page()
-        yield page
-        page.close()
 
 @pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
-def test_MultipleTests(new_page: new_page):
+def test_MultipleTests(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
 
     #Přihlášení se do systému
@@ -30,12 +19,12 @@ def test_MultipleTests(new_page: new_page):
     dropdown_click = new_page.locator("#dropdown")
     dropdown_click.select_option("1")
     choice = dropdown_click.locator("option[value='1']")
-    assert choice.evaluate("el => el.selected") is True
+    assert choice.evaluate("el => el.selected") is True #Ověření, že byla vybrána první možnost
     assert choice.inner_text() == "Option 1"
 
     new_page.wait_for_timeout(500)
 
-    #Zakliknutí checkboxu - imitace výběru položek ve filtru
+    #Zakliknutí checkboxu
     new_page.goto("https://the-internet.herokuapp.com/")
     checkbox_new_page = new_page.locator("[href='/checkboxes']").click()
     checkbox_menu = new_page.locator("#checkboxes")
@@ -47,8 +36,6 @@ def test_MultipleTests(new_page: new_page):
 
     assert checkbox_1.is_checked()
     assert not checkbox_2.is_checked()
-
-#
 
 
 
