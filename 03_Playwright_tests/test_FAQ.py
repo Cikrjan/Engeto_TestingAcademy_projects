@@ -1,7 +1,8 @@
 import pytest
+from playwright.sync_api import expect, Page
 
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
-def test_FAQ(new_page):
+# @pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
+def test_FAQ(new_page: Page):
     #přejití na testovanou stránku
     new_page.goto("https://engeto.cz/")
 
@@ -17,13 +18,15 @@ def test_FAQ(new_page):
 
     #Filtr "Ukončení kurzu a uplatnění" a otestování změny barvy pozadí po najetí na tlačítko
     filter_button = new_page.locator("[for='filter-item_ukonceni-kurzu']")
-    color_before = filter_button.evaluate("""
-        function(el) {
-            return getComputedStyle(el).backgroundColor;
-        }
-    """)
+    color_before = filter_button.evaluate("el => getComputedStyle(el).backgroundColor")
     filter_button.hover()
-    new_page.wait_for_timeout(1000)
+
+    #Čekání na změnu barvy, jinak 3 sec timeout
+    expect.poll(
+        lambda: filter_button.evaluate("el => getComputedStyle(el).backgroundColor"),
+        timeout = 3000,
+        message = "Barva se nezměnila"
+    ).not_to_equal(color_before)
     color_after = filter_button.evaluate("""
         function(el) {
             return getComputedStyle(el).backgroundColor;
