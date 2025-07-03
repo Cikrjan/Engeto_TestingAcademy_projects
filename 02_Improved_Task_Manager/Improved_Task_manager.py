@@ -10,12 +10,12 @@ def pripojeni_db():
             database = "taskmanager"
         )
     except Error as e:
+        print(f"Databázi se nepodařilo připojit. Chyba: {e}")
         return None
 
 def vytvoreni_tabulky(pripojeni):
     #Připojení databáze
     if pripojeni == None:
-        print("Databáze není připojená.")
         exit()
     else:
         kurzor = pripojeni.cursor() 
@@ -37,7 +37,7 @@ def vytvoreni_tabulky(pripojeni):
                 UkolID INT PRIMARY KEY AUTO_INCREMENT,
                 Nazev_ukolu VARCHAR(50) NOT NULL,
                 Popis_ukolu VARCHAR(50) NOT NULL,
-                Stav VARCHAR(10) DEFAULT "Nezahájeno",
+                Stav ENUM("Nezahájeno", "Probíhá", "Hotovo") DEFAULT "Nezahájeno",
                 Datum_vytvoreni DATE
             )
             """)
@@ -79,11 +79,8 @@ def zobrazit_ukoly(pripojeni):
         print("Seznam je prázdný")
     else:
         print("\nSeznam úkolů: ")    
-        for row in seznam:   
-            if row[3] == "Hotovo":
-                pass
-            else:
-                print(f"{row[0]} : {row[1]} - {row[2]} ({row[3]})")
+        for row in seznam:
+            print(f"{row[0]} : {row[1]} - {row[2]} ({row[3]})")
     print("")
     kurzor.close()
 
@@ -111,17 +108,20 @@ def aktualizovat_ukol_vstupy(pripojeni):
         else:
             try:
                 ukolID = int(input("ID úkolu: ").strip())
-                stav = input("Nový stav úkolu (Probíhá, Hotovo): ").strip()
-                #SQL dotaz pro účely ověření zadání platného ID
-                kurzor = pripojeni.cursor()
-                kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
-                platneID = kurzor.fetchone()
-                if platneID:
-                    aktualizovat_ukol(pripojeni, ukolID, stav)
-                    break
-                else:
-                    print("ID neexistuje, zadejte ho prosím znovu.\n")
-            except ValueError as e:
+                try:
+                    stav = input("Nový stav úkolu (Probíhá, Hotovo): ").strip()
+                    #SQL dotaz pro účely ověření zadání platného ID
+                    kurzor = pripojeni.cursor()
+                    kurzor.execute("SELECT * FROM ukoly WHERE UkolID = %s", (ukolID,))
+                    platneID = kurzor.fetchone()
+                    if platneID:
+                        aktualizovat_ukol(pripojeni, ukolID, stav)
+                        break
+                    else:
+                        print("ID neexistuje, zadejte ho prosím znovu.\n")
+                except mysql.connector.Error as e:
+                    print("Zadali jste neplatný stav.")
+            except ValueError as ve:
                 print("\nZadali jste neplatnou volbu.")
 
 def aktualizovat_ukol(pripojeni, ukolID, stav):
@@ -167,13 +167,16 @@ def odstranit_ukol(pripojeni, ukolID):
     kurzor.close()
     print("Úkol odstraněn.\n")
 
-def ukoncit_program(pripojeni):
-    kurzor = pripojeni.cursor()
-    kurzor.execute("DROP TABLE ukoly")
-    pripojeni.commit()
-    kurzor.close()
-    pripojeni.close()
-    print("\nProgram ukončen.")
+###################################################################################
+# Pro účely testování programu, aby byla tabulka vždy prázdná při ukončení programu
+# def ukoncit_program(pripojeni):
+#     kurzor = pripojeni.cursor()
+#     kurzor.execute("DROP TABLE ukoly")
+#     pripojeni.commit()
+#     kurzor.close()
+#     pripojeni.close()
+###################################################################################
+
 
 def hlavni_menu(pripojeni):
     while True:
@@ -196,7 +199,9 @@ def hlavni_menu(pripojeni):
             elif vyber == 4:
                 odstranit_ukol_vstupy(pripojeni)
             elif vyber == 5:
-                ukoncit_program(pripojeni)
+                #Pro účely testování programu
+                # ukoncit_program(pripojeni)
+                print("\nProgram ukončen.")
                 break
             else:
                 print("\nZadejte číslo 1-5.\n")
