@@ -1,7 +1,6 @@
 import pytest
 from playwright.sync_api import expect, Page
 
-@pytest.mark.parametrize("new_page", ["chromium"], indirect=True)
 def test_FAQ(new_page):
     #přejití na testovanou stránku
     new_page.goto("https://engeto.cz/")
@@ -35,5 +34,3 @@ def test_FAQ(new_page):
     link = new_page.locator("#kdy-se-uzavira-kurz-do-kdy-mohu-odevzdavat-projekty-prochazet-zaznamy-a-ucebni-materialy > div > ul > li:nth-child(4) > a:nth-child(3)")
     
     assert link.is_visible()
-
-# , "firefox", "webkit"

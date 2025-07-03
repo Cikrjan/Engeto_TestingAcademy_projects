@@ -2,7 +2,7 @@ import pytest
 from playwright.sync_api import expect, Page
 
 #Přihlášení se do systému
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
+# @pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_SignIn(new_page):
 
     new_page.goto("https://the-internet.herokuapp.com/")
@@ -13,7 +13,6 @@ def test_SignIn(new_page):
     assert new_page.url == "https://the-internet.herokuapp.com/secure"
 
 #Výběr položky v dropdown
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_Dropdown(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
     dropdown_new_page = new_page.locator("[href='/dropdown']").click()
@@ -24,7 +23,6 @@ def test_Dropdown(new_page):
     expect(choice).to_have_text("Option 1")
     
 #Zakliknutí checkboxu
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_Checkbox(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
     checkbox_new_page = new_page.locator("[href='/checkboxes']").click()

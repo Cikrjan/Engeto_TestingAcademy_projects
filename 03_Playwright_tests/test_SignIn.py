@@ -1,6 +1,5 @@
 import pytest
 
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_SignIn_Positive(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
 
@@ -18,7 +17,6 @@ def test_SignIn_Positive(new_page):
 
     assert new_page.url == "https://the-internet.herokuapp.com/secure"
 
-@pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_SignIn_Negative(new_page):
     new_page.goto("https://the-internet.herokuapp.com/")
 
