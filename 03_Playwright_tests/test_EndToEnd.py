@@ -2,7 +2,6 @@ import pytest
 from playwright.sync_api import expect, Page
 
 #Přihlášení se do systému
-# @pytest.mark.parametrize("new_page", ["chromium", "firefox", "webkit"], indirect=True)
 def test_SignIn(new_page):
 
     new_page.goto("https://the-internet.herokuapp.com/")
